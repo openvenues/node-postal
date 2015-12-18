@@ -1,142 +1,105 @@
-#include <node.h>
 #include <libpostal/libpostal.h>
-
-#include "v8_utils.h"
+#include <nan.h>
 
 #define PARSER_USAGE "Usage: parse_address(address[, options])"
 
-namespace libpostal {
-    using v8::FunctionCallbackInfo;
-    using v8::Isolate;
-    using v8::Local;
-    using v8::Exception;
-    using v8::Object;
-    using v8::Object;
-    using v8::Array;
-    using v8::String;
-    using v8::Value;
+void ParseAddress(const Nan::FunctionCallbackInfo<v8::Value> &args) {
+    if (args.Length() < 1) {
+        Nan::ThrowTypeError(PARSER_USAGE);
+        return;
+    }
 
+    if (!args[0]->IsString()) {
+        Nan::ThrowTypeError(PARSER_USAGE);
+    }
 
-    void ParseAddress(const FunctionCallbackInfo<Value> &args) {
-        Isolate *isolate = args.GetIsolate();
+    Nan::Utf8String address_utf8(args[0]);
+    char *address = *address_utf8;
 
-        if (args.Length() < 1) {
-            isolate->ThrowException(Exception::TypeError(
-                String::NewFromUtf8(isolate, PARSER_USAGE)
-            ));
-            return;
-        }
+    if (address == NULL) {
+        Nan::ThrowTypeError("Could not convert first arg to string");
+        return;
+    }
 
-        if (!args[0]->IsString()) {
-            isolate->ThrowException(Exception::TypeError(
-                String::NewFromUtf8(isolate, PARSER_USAGE)
-            ));
-        }
+    char *language = NULL;
+    char *country = NULL;
 
-        char *address = v8_to_c_string(args[0]);
-        if (address == NULL) {
-            isolate->ThrowException(Exception::TypeError(
-                String::NewFromUtf8(isolate, "Could not convert first arg to string")
-            ));
-            return;
-        }
+    uint64_t i;
 
-        char *language = NULL;
-        char *country = NULL;
+    address_parser_options_t options = LIBPOSTAL_ADDRESS_PARSER_DEFAULT_OPTIONS;
 
-        uint64_t i;
+    if (args.Length() > 1 && args[1]->IsObject()) {
+        v8::Local<v8::Object> props = args[1]->ToObject();
+        v8::Local<v8::Array> prop_names = Nan::GetPropertyNames(props).ToLocalChecked();
 
-        address_parser_options_t options = LIBPOSTAL_ADDRESS_PARSER_DEFAULT_OPTIONS;
+        for (i = 0; i < prop_names->Length(); i++) {
+            v8::Local<v8::Value> key = prop_names->Get(i);
 
-        if (args.Length() > 1 && args[1]->IsObject()) {
-            Local<Object> props = args[1]->ToObject();
-            Local<Array> prop_names = props->GetOwnPropertyNames();
+            if (key->IsString()) {
+                Nan::Utf8String utf8_key(key);
+                char *key_string = *utf8_key;
 
-            for (i = 0; i < prop_names->Length(); i++) {
-                Local<Value> key = prop_names->Get(i);
-
-                if (key->IsString()) {
-                    v8::String::Utf8Value utf8_key(key);
-                    char *key_string = *utf8_key;
-
-                    Local<Value> value = props->Get(key);
-
-                    if (strcmp(key_string, "language") == 0) {
-                        language = v8_to_c_string(value);
-                        if (language != NULL) {
-                            options.language = language;
-                        }
-                    } else if (strcmp(key_string, "country") == 0) {
-                        country = v8_to_c_string(value);
-                        if (country != NULL) {
-                            options.country = country;
-                        }
+                if (strcmp(key_string, "language") == 0) {
+                    Nan::Utf8String language_utf8(props->Get(key));
+                    language = *language_utf8;
+                    if (language != NULL) {
+                        options.language = language;
+                    }
+                } else if (strcmp(key_string, "country") == 0) {
+                    Nan::Utf8String country_utf8(props->Get(key));
+                    country = *country_utf8;
+                    if (country != NULL) {
+                        options.country = country;
                     }
                 }
-
             }
 
         }
 
-        address_parser_response_t *response = parse_address(address, options);
-
-        free(address);
-
-        if (language != NULL) {
-            free(language);
-        }
-
-        if (country != NULL) {
-            free(country);
-        }
-
-        if (response == NULL) {
-            isolate->ThrowException(Exception::TypeError(
-                String::NewFromUtf8(isolate, "Error parsing address")
-            ));
-        }
-
-        Local<Array> ret = Array::New(isolate, response->num_components);
-
-        Local<String> name_key = String::NewFromUtf8(isolate, "component");
-        Local<String> label_key = String::NewFromUtf8(isolate, "label");
-
-        for (i = 0; i < response->num_components; i++) {
-            char *component = response->components[i];
-            char *label = response->labels[i];
-
-            Local<Object> o = Object::New(isolate);
-            o->Set(name_key, String::NewFromUtf8(isolate, component));
-            o->Set(label_key, String::NewFromUtf8(isolate, label));
-
-            ret->Set(i, o);
-        }
-
-        address_parser_response_destroy(response);
-
-        args.GetReturnValue().Set(ret);
     }
 
-    static void cleanup(void*) {
-        libpostal_teardown();
-        libpostal_teardown_parser();
+    address_parser_response_t *response = parse_address(address, options);
+
+    if (response == NULL) {
+        Nan::ThrowError("Error parsing address");
+        return;
     }
 
-    void init(Local<Object> exports) {
-        Isolate* isolate = exports->GetIsolate();
-        if (!libpostal_setup() || !libpostal_setup_parser()) {
-            isolate->ThrowException(Exception::Error(
-                String::NewFromUtf8(isolate, "Could not load libpostal")
-            ));
-            return;
-        }
+    v8::Local<v8::Array> ret = Nan::New<v8::Array>(response->num_components);
 
-        NODE_SET_METHOD(exports, "parse_address", ParseAddress);
+    v8::Local<v8::String> name_key = Nan::New("component").ToLocalChecked();
+    v8::Local<v8::String> label_key = Nan::New("label").ToLocalChecked();
 
+    for (i = 0; i < response->num_components; i++) {
+        char *component = response->components[i];
+        char *label = response->labels[i];
 
-        node::AtExit(cleanup);
+        v8::Local<v8::Object> o = Nan::New<v8::Object>();
+        o->Set(name_key, Nan::New(component).ToLocalChecked());
+        o->Set(label_key, Nan::New(label).ToLocalChecked());
+
+        ret->Set(i, o);
     }
 
-    NODE_MODULE(expand, init)
+    address_parser_response_destroy(response);
 
+    args.GetReturnValue().Set(ret);
 }
+
+static void cleanup(void*) {
+    libpostal_teardown();
+    libpostal_teardown_parser();
+}
+
+void init(v8::Local<v8::Object> exports) {
+    if (!libpostal_setup() || !libpostal_setup_parser()) {
+        Nan::ThrowError("Could not load libpostal");
+        return;
+    }
+
+    exports->Set(Nan::New("parse_address").ToLocalChecked(), Nan::New<v8::FunctionTemplate>(ParseAddress)->GetFunction());
+
+    node::AtExit(cleanup);
+}
+
+NODE_MODULE(expand, init)
