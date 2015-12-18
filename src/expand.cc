@@ -4,19 +4,18 @@
 
 #define EXPAND_USAGE "Usage: expand_address(address, options)"
 
-void ExpandAddress(const Nan::FunctionCallbackInfo<v8::Value> &args) {
-
-    if (args.Length() < 2) {
+NAN_METHOD(ExpandAddress) {
+    if (info.Length() < 2) {
         Nan::ThrowTypeError(EXPAND_USAGE);
         return;
     }
 
-    if (!(args[0]->IsString()) || !(args[1]->IsObject())) {
+    if (!(info[0]->IsString()) || !(info[1]->IsObject())) {
         Nan::ThrowTypeError(EXPAND_USAGE);
         return;
     }
 
-    Nan::Utf8String address_utf8(args[0]);
+    Nan::Utf8String address_utf8(info[0]);
     char *address = *address_utf8;
 
     if (address == NULL) {
@@ -26,7 +25,7 @@ void ExpandAddress(const Nan::FunctionCallbackInfo<v8::Value> &args) {
 
     normalize_options_t options = LIBPOSTAL_DEFAULT_OPTIONS;
 
-    v8::Local<v8::Object> props = args[1]->ToObject();
+    v8::Local<v8::Object> props = info[1]->ToObject();
 
     v8::Local<v8::Array> prop_names = Nan::GetPropertyNames(props).ToLocalChecked();
 
@@ -42,7 +41,7 @@ void ExpandAddress(const Nan::FunctionCallbackInfo<v8::Value> &args) {
             Nan::Utf8String utf8_key(key);
             char *key_string = *utf8_key;
 
-            v8::Local<v8::Value> value = props->Get(key);
+            v8::Local<v8::Value> value = Nan::Get(props, key).ToLocalChecked();
             if (strcmp(key_string, "languages") == 0) {
                 if (value->IsArray()) {
                     v8::Local<v8::Array> langs_value = v8::Local<v8::Array>::Cast(value);
@@ -60,42 +59,42 @@ void ExpandAddress(const Nan::FunctionCallbackInfo<v8::Value> &args) {
 
             } else if (strcmp(key_string, "address_components") == 0) {
                 if (value->IsNumber()) {
-                    options.address_components = (uint16_t)value->Uint32Value();
+                    options.address_components = (uint16_t) Nan::To<uint32_t>(value).FromJust();
                 }
             } else if (strcmp(key_string, "latin_ascii") == 0) {
-                options.latin_ascii = value->BooleanValue();
+                options.latin_ascii = Nan::To<bool>(value).FromJust();
             } else if (strcmp(key_string, "transliterate") == 0) {
-                options.transliterate = value->BooleanValue();
+                options.transliterate = Nan::To<bool>(value).FromJust();
             } else if (strcmp(key_string, "strip_accents") == 0) {
-                options.strip_accents = value->BooleanValue();
+                options.strip_accents = Nan::To<bool>(value).FromJust();
             } else if (strcmp(key_string, "decompose") == 0) {
-                options.decompose = value->BooleanValue();
+                options.decompose = Nan::To<bool>(value).FromJust();
             } else if (strcmp(key_string, "lowercase") == 0) {
-                options.lowercase = value->BooleanValue();
+                options.lowercase = Nan::To<bool>(value).FromJust();
             } else if (strcmp(key_string, "trim_string") == 0) {
-                options.trim_string = value->BooleanValue();
+                options.trim_string = Nan::To<bool>(value).FromJust();
             } else if (strcmp(key_string, "replace_word_hyphens") == 0) {
-                options.replace_word_hyphens = value->BooleanValue();
+                options.replace_word_hyphens = Nan::To<bool>(value).FromJust();
             } else if (strcmp(key_string, "delete_word_hyphens") == 0) {
-                options.delete_word_hyphens = value->BooleanValue();
+                options.delete_word_hyphens = Nan::To<bool>(value).FromJust();
             } else if (strcmp(key_string, "replace_numeric_hyphens") == 0) {
-                options.replace_numeric_hyphens = value->BooleanValue();
+                options.replace_numeric_hyphens = Nan::To<bool>(value).FromJust();
             } else if (strcmp(key_string, "delete_numeric_hyphens") == 0) {
-                options.delete_numeric_hyphens = value->BooleanValue();
+                options.delete_numeric_hyphens = Nan::To<bool>(value).FromJust();
             } else if (strcmp(key_string, "split_alpha_from_numeric") == 0) {
-                options.split_alpha_from_numeric = value->BooleanValue();
+                options.split_alpha_from_numeric = Nan::To<bool>(value).FromJust();
             } else if (strcmp(key_string, "delete_final_periods") == 0) {
-                options.delete_final_periods = value->BooleanValue();
+                options.delete_final_periods = Nan::To<bool>(value).FromJust();
             } else if (strcmp(key_string, "delete_acronym_periods") == 0) {
-                options.delete_acronym_periods = value->BooleanValue();
+                options.delete_acronym_periods = Nan::To<bool>(value).FromJust();
             } else if (strcmp(key_string, "drop_english_possessives") == 0) {
-                options.drop_english_possessives = value->BooleanValue();
+                options.drop_english_possessives = Nan::To<bool>(value).FromJust();
             } else if (strcmp(key_string, "delete_apostrophes") == 0) {
-                options.delete_apostrophes = value->BooleanValue();
+                options.delete_apostrophes = Nan::To<bool>(value).FromJust();
             } else if (strcmp(key_string, "expand_numex") == 0) {
-                options.expand_numex = value->BooleanValue();
+                options.expand_numex = Nan::To<bool>(value).FromJust();
             } else if (strcmp(key_string, "roman_numerals") == 0) {
-                options.roman_numerals = value->BooleanValue();
+                options.roman_numerals = Nan::To<bool>(value).FromJust();
             }
         }
     }
@@ -124,7 +123,7 @@ void ExpandAddress(const Nan::FunctionCallbackInfo<v8::Value> &args) {
     }
     free(expansions);
 
-    args.GetReturnValue().Set(ret);
+    info.GetReturnValue().Set(ret);
 }
 
 static void cleanup(void*) {
