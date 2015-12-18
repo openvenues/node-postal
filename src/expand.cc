@@ -15,7 +15,6 @@ namespace libpostal {
     using v8::Array;
     using v8::String;
     using v8::Number;
-    using v8::Handle;
     using v8::Value;
 
     void ExpandAddress(const FunctionCallbackInfo<Value> &args) {
