@@ -1,0 +1,38 @@
+{
+    "name": "node-postal",
+    "version": "0.2.0",
+    "author": "Al Barrentine (@thatdatabaseguy)",
+    "description": "International address parsing/normalization at C speed",
+    "main": "index.js",
+    "license": "MIT",
+    "keywords": [
+        "libpostal",
+        "addresses",
+        "address parsing",
+        "i18n",
+        "geo",
+        "deduping",
+        "machine learning",
+        "natural language processing",
+        "nlp",
+        "c"
+    ],
+    "homepage": "https://github.com/openvenues/node-postal",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/openvenues/node-postal.git"
+    },
+    "dependencies": {
+        "bindings": "^1.2.1",
+        "nan": "^2.1.0"
+    },
+    "devDependencies": {
+        "mocha": "^2.3.4",
+        "simplesets": "^1.2.0"
+    },
+    "scripts": {
+        "install" : "(node-gyp rebuild) || (exit 0)",
+        "test": "mocha ./test"
+    },
+    "gypfile": true
+}
