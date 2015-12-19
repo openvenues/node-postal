@@ -86,4 +86,4 @@ npm test
 Special Thanks
 --------------
 
-@imlucas for information and examples of repos using Nan, node-gyp, etc.
+Lucas Hrabovsky (https://github.com/imlucas) for information and examples of repos using Nan, node-gyp, etc.
