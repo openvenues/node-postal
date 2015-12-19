@@ -72,7 +72,7 @@ Compatibility
 
 The C++ bindings are written using Nan (https://github.com/nodejs/nan), which abstracts many of the API changes across versions of V8. That should keep node-postal compatible
 
-If you're having trouble compiling, post an issue with your OS and Node version and the output of npm install / node-gyp rebuild.
+If you're having trouble compiling, post a Github issue with your OS and Node versions along with the output of npm install / node-gyp rebuild.
 
 Tests
 -----
