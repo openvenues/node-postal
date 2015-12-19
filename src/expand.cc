@@ -109,6 +109,7 @@ NAN_METHOD(ExpandAddress) {
     }
 
     options.languages = languages;
+    options.num_languages = num_languages;
 
     size_t num_expansions = 0;
 
