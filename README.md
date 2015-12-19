@@ -1,9 +1,9 @@
 node-postal
 -----------
 
-These are the NodeJS bindings to https://github.com/openvenues/libpostal
+These are the NodeJS bindings to https://github.com/openvenues/libpostal, a fast, multilingual NLP library for parsing/normalizing physical addresses. libpostal is written in C simply because virtually every other language can bind to C.
 
-We're supporting NodeJS bindings primarily because Pelias (https://github.com/pelias) is written in Node.
+We're supporting official NodeJS mostly because Pelias (https://github.com/pelias), Mapzen's geocoder, is written in Node, but also because it's an awesome, ubiquitous language that's immensely popular among folks in the geo world.
 
 Installation
 ------------
@@ -34,6 +34,20 @@ sudo make install
 sudo ldconfig
 ```
 
+**Installing node-gyp on Linux (Ubuntu)**
+
+First make sure you have:
+
+1. gcc, g++ and make (```sudo apt-get install build-essential``` on Ubuntu)
+2. NodeJS with all the development headers (if using a package manager like apt-get, follow the instructions here: https://nodejs.org/en/download/package-manager/)
+3. python 2.7
+
+Then install node-gyp system-wide:
+
+```
+sudo npm install -g node-gyp
+```
+
 **Installing the Node bindings**
 
 ```
@@ -52,3 +66,24 @@ postal.expand.expand_address('V XX Settembre, 20', {languages: ['it']})
 // Parser API
 postal.parser.parse_address('Mayfield 688 Franklin Ave, Crown Heights, Brooklyn, NY 11238')
 ```
+
+Compatibility
+-------------
+
+The C++ bindings are written using Nan (https://github.com/nodejs/nan), which abstracts many of the API changes across versions of V8. That should keep node-postal compatible
+
+If you're having trouble compiling, post an issue with your OS and Node version and the output of npm install / node-gyp rebuild.
+
+Tests
+-----
+
+To run the unit tests:
+
+```
+npm test
+```
+
+Special Thanks
+--------------
+
+@imlucas for information and examples of repos using Nan, node-gyp, etc.
