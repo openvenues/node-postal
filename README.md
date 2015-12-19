@@ -1,7 +1,7 @@
 node-postal
 -----------
 
-These are the NodeJS bindings to https://github.com/openvenues/libpostal, a fast, multilingual NLP library for parsing/normalizing physical addresses. libpostal is written in C simply because virtually every other language can bind to C.
+These are the NodeJS bindings to https://github.com/openvenues/libpostal, a fast, multilingual NLP library for parsing/normalizing physical addresses. libpostal is written in C because virtually every other language can bind to C.
 
 We're supporting official NodeJS mostly because Pelias (https://github.com/pelias), Mapzen's geocoder, is written in Node, but also because it's an awesome, ubiquitous language that's immensely popular among folks in the geo world.
 
