@@ -6,10 +6,11 @@
                 "src/expand.cc"
             ],
             "libraries": [
-                "-lpostal"
+                "-lpostal", "-L/usr/local/lib"
             ],
             "include_dirs": [
-                "<!(node -e \"require('nan')\")"
+                "<!(node -e \"require('nan')\")",
+                "/usr/local/include"
             ]
         },
         {
@@ -18,10 +19,11 @@
                 "src/parser.cc"
             ],
             "libraries": [
-                "-lpostal"
+                "-lpostal", "-L/usr/local/lib"
             ],
             "include_dirs": [
-                "<!(node -e \"require('nan')\")"
+                "<!(node -e \"require('nan')\")",
+                "/usr/local/include"
             ]
         }
     ]
