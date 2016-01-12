@@ -42,6 +42,12 @@ First make sure you have:
 2. NodeJS with all the development headers (if using a package manager like apt-get, follow the instructions here: https://nodejs.org/en/download/package-manager/)
 3. python 2.7
 
+*On Mac OSX*
+```
+cd /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.11.sdk/usr
+sudo ln -s /usr/local local
+```
+
 Then install node-gyp system-wide:
 
 ```
