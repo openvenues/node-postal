@@ -7,7 +7,7 @@ describe('expand', function() {
     var expansions2;
     describe('expand_address', function() {
         it('should correctly expand a US address', function() {
-            expansions = new sets.Set(postal.expand.expand_address('781 Franklin Ave Crown Hts Brooklyn NY', {languages: ['en']}));
+            expansions = new sets.Set(postal.expand.expand_address('781 Franklin Ave Crown Hts Brooklyn NY'));
             assert(expansions.has('781 franklin avenue crown heights brooklyn new york'));
         });
         it('should correctly dedupe equivalent addresses', function() {
@@ -16,7 +16,7 @@ describe('expand', function() {
             assert(expansions.intersection(expansions2).size() > 0);
         });
         it('should handle non-ASCII addresses correctly from Node', function() {
-            expansions = new sets.Set(postal.expand.expand_address('Friedrichstraße 128, Berlin, Germany', {languages: ['de']}));
+            expansions = new sets.Set(postal.expand.expand_address('Friedrichstraße 128, Berlin, Germany'));
             console.log(expansions);
             assert(expansions.has('friedrich straße 128 berlin germany'));
         });
