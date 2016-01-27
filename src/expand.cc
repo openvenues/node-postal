@@ -5,12 +5,12 @@
 #define EXPAND_USAGE "Usage: expand_address(address, options)"
 
 NAN_METHOD(ExpandAddress) {
-    if (info.Length() < 2) {
+    if (info.Length() < 1) {
         Nan::ThrowTypeError(EXPAND_USAGE);
         return;
     }
 
-    if (!(info[0]->IsString()) || !(info[1]->IsObject())) {
+    if (!(info[0]->IsString()) || (info.Length() > 1 && !(info[1]->IsObject()))) {
         Nan::ThrowTypeError(EXPAND_USAGE);
         return;
     }
@@ -25,87 +25,80 @@ NAN_METHOD(ExpandAddress) {
 
     normalize_options_t options = LIBPOSTAL_DEFAULT_OPTIONS;
 
-    v8::Local<v8::Object> props = info[1]->ToObject();
-
-    v8::Local<v8::Array> prop_names = Nan::GetPropertyNames(props).ToLocalChecked();
-
     char **languages = NULL;
     size_t num_languages = 0;
 
     uint64_t i, j;
 
-    for (i = 0; i < prop_names->Length(); i++) {
-        v8::Local<v8::Value> key = prop_names->Get(i);
+    if (info.Length() > 1) {
+        v8::Local<v8::Object> props = info[1]->ToObject();
 
-        if (key->IsString()) {
-            Nan::Utf8String utf8_key(key);
-            char *key_string = *utf8_key;
+        v8::Local<v8::Array> prop_names = Nan::GetPropertyNames(props).ToLocalChecked();
 
-            v8::Local<v8::Value> value = Nan::Get(props, key).ToLocalChecked();
-            if (strcmp(key_string, "languages") == 0) {
-                if (value->IsArray()) {
-                    v8::Local<v8::Array> langs_value = v8::Local<v8::Array>::Cast(value);
-                    size_t len = langs_value->Length() * sizeof(char *);
-                    languages = (char **)malloc(len);
-                    
-                    for (j = 0; j < langs_value->Length(); j++) {
-                        Nan::Utf8String lang_utf8(langs_value->Get(j));
-                        char *lang = *lang_utf8;
-                        if (lang != NULL && strlen(lang) < MAX_LANGUAGE_LEN) {
-                            languages[num_languages++] = lang;
+        for (i = 0; i < prop_names->Length(); i++) {
+            v8::Local<v8::Value> key = prop_names->Get(i);
+
+            if (key->IsString()) {
+                Nan::Utf8String utf8_key(key);
+                char *key_string = *utf8_key;
+
+                v8::Local<v8::Value> value = Nan::Get(props, key).ToLocalChecked();
+                if (strcmp(key_string, "languages") == 0) {
+                    if (value->IsArray()) {
+                        v8::Local<v8::Array> langs_value = v8::Local<v8::Array>::Cast(value);
+                        size_t len = langs_value->Length() * sizeof(char *);
+                        languages = (char **)malloc(len);
+                        
+                        for (j = 0; j < langs_value->Length(); j++) {
+                            Nan::Utf8String lang_utf8(langs_value->Get(j));
+                            char *lang = *lang_utf8;
+                            if (lang != NULL && strlen(lang) < MAX_LANGUAGE_LEN) {
+                                languages[num_languages++] = lang;
+                            }
                         }
                     }
-                }
 
-            } else if (strcmp(key_string, "address_components") == 0) {
-                if (value->IsNumber()) {
-                    options.address_components = (uint16_t) Nan::To<uint32_t>(value).FromJust();
+                } else if (strcmp(key_string, "address_components") == 0) {
+                    if (value->IsNumber()) {
+                        options.address_components = (uint16_t) Nan::To<uint32_t>(value).FromJust();
+                    }
+                } else if (strcmp(key_string, "latin_ascii") == 0) {
+                    options.latin_ascii = Nan::To<bool>(value).FromJust();
+                } else if (strcmp(key_string, "transliterate") == 0) {
+                    options.transliterate = Nan::To<bool>(value).FromJust();
+                } else if (strcmp(key_string, "strip_accents") == 0) {
+                    options.strip_accents = Nan::To<bool>(value).FromJust();
+                } else if (strcmp(key_string, "decompose") == 0) {
+                    options.decompose = Nan::To<bool>(value).FromJust();
+                } else if (strcmp(key_string, "lowercase") == 0) {
+                    options.lowercase = Nan::To<bool>(value).FromJust();
+                } else if (strcmp(key_string, "trim_string") == 0) {
+                    options.trim_string = Nan::To<bool>(value).FromJust();
+                } else if (strcmp(key_string, "replace_word_hyphens") == 0) {
+                    options.replace_word_hyphens = Nan::To<bool>(value).FromJust();
+                } else if (strcmp(key_string, "delete_word_hyphens") == 0) {
+                    options.delete_word_hyphens = Nan::To<bool>(value).FromJust();
+                } else if (strcmp(key_string, "replace_numeric_hyphens") == 0) {
+                    options.replace_numeric_hyphens = Nan::To<bool>(value).FromJust();
+                } else if (strcmp(key_string, "delete_numeric_hyphens") == 0) {
+                    options.delete_numeric_hyphens = Nan::To<bool>(value).FromJust();
+                } else if (strcmp(key_string, "split_alpha_from_numeric") == 0) {
+                    options.split_alpha_from_numeric = Nan::To<bool>(value).FromJust();
+                } else if (strcmp(key_string, "delete_final_periods") == 0) {
+                    options.delete_final_periods = Nan::To<bool>(value).FromJust();
+                } else if (strcmp(key_string, "delete_acronym_periods") == 0) {
+                    options.delete_acronym_periods = Nan::To<bool>(value).FromJust();
+                } else if (strcmp(key_string, "drop_english_possessives") == 0) {
+                    options.drop_english_possessives = Nan::To<bool>(value).FromJust();
+                } else if (strcmp(key_string, "delete_apostrophes") == 0) {
+                    options.delete_apostrophes = Nan::To<bool>(value).FromJust();
+                } else if (strcmp(key_string, "expand_numex") == 0) {
+                    options.expand_numex = Nan::To<bool>(value).FromJust();
+                } else if (strcmp(key_string, "roman_numerals") == 0) {
+                    options.roman_numerals = Nan::To<bool>(value).FromJust();
                 }
-            } else if (strcmp(key_string, "latin_ascii") == 0) {
-                options.latin_ascii = Nan::To<bool>(value).FromJust();
-            } else if (strcmp(key_string, "transliterate") == 0) {
-                options.transliterate = Nan::To<bool>(value).FromJust();
-            } else if (strcmp(key_string, "strip_accents") == 0) {
-                options.strip_accents = Nan::To<bool>(value).FromJust();
-            } else if (strcmp(key_string, "decompose") == 0) {
-                options.decompose = Nan::To<bool>(value).FromJust();
-            } else if (strcmp(key_string, "lowercase") == 0) {
-                options.lowercase = Nan::To<bool>(value).FromJust();
-            } else if (strcmp(key_string, "trim_string") == 0) {
-                options.trim_string = Nan::To<bool>(value).FromJust();
-            } else if (strcmp(key_string, "replace_word_hyphens") == 0) {
-                options.replace_word_hyphens = Nan::To<bool>(value).FromJust();
-            } else if (strcmp(key_string, "delete_word_hyphens") == 0) {
-                options.delete_word_hyphens = Nan::To<bool>(value).FromJust();
-            } else if (strcmp(key_string, "replace_numeric_hyphens") == 0) {
-                options.replace_numeric_hyphens = Nan::To<bool>(value).FromJust();
-            } else if (strcmp(key_string, "delete_numeric_hyphens") == 0) {
-                options.delete_numeric_hyphens = Nan::To<bool>(value).FromJust();
-            } else if (strcmp(key_string, "split_alpha_from_numeric") == 0) {
-                options.split_alpha_from_numeric = Nan::To<bool>(value).FromJust();
-            } else if (strcmp(key_string, "delete_final_periods") == 0) {
-                options.delete_final_periods = Nan::To<bool>(value).FromJust();
-            } else if (strcmp(key_string, "delete_acronym_periods") == 0) {
-                options.delete_acronym_periods = Nan::To<bool>(value).FromJust();
-            } else if (strcmp(key_string, "drop_english_possessives") == 0) {
-                options.drop_english_possessives = Nan::To<bool>(value).FromJust();
-            } else if (strcmp(key_string, "delete_apostrophes") == 0) {
-                options.delete_apostrophes = Nan::To<bool>(value).FromJust();
-            } else if (strcmp(key_string, "expand_numex") == 0) {
-                options.expand_numex = Nan::To<bool>(value).FromJust();
-            } else if (strcmp(key_string, "roman_numerals") == 0) {
-                options.roman_numerals = Nan::To<bool>(value).FromJust();
             }
         }
-    }
-
-    if (languages == NULL) {
-        Nan::ThrowTypeError(".languages is required");
-        return;
-    } else if (num_languages == 0) {
-        Nan::ThrowTypeError(".languages must be an array of language codes as strings");
-        free(languages);
-        return;
     }
 
     options.languages = languages;
@@ -114,6 +107,10 @@ NAN_METHOD(ExpandAddress) {
     size_t num_expansions = 0;
 
     char **expansions = expand_address(address, options, &num_expansions);
+
+    if (languages != NULL) {
+        free(languages);
+    }
 
     v8::Local<v8::Array> ret = Nan::New<v8::Array>(num_expansions);
 
@@ -129,10 +126,11 @@ NAN_METHOD(ExpandAddress) {
 
 static void cleanup(void*) {
     libpostal_teardown();
+    libpostal_teardown_language_classifier();
 }
 
 void init(v8::Local<v8::Object> exports) {
-    if (!libpostal_setup()) {
+    if (!libpostal_setup() || !libpostal_setup_language_classifier()) {
         Nan::ThrowError("Could not load libpostal");
         return;
     }
