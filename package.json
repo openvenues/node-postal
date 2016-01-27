@@ -1,6 +1,6 @@
 {
     "name": "node-postal",
-    "version": "0.2.0",
+    "version": "0.3.0",
     "author": "Al Barrentine (@thatdatabaseguy)",
     "description": "International address parsing/normalization at C speed",
     "main": "index.js",
