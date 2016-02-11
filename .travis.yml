@@ -23,7 +23,7 @@ install:
     - git clone https://github.com/openvenues/libpostal
     - cd libpostal
     - ./bootstrap.sh
-    - ./configure --datadir=$(pwd)/data --prefix=$(realpath $(pwd)/..) --bindir=$(realpath $(pwd)
+    - ./configure --datadir=$(pwd)/data --prefix=$(realpath $(pwd)/..) --bindir=$(realpath $(pwd))
     - make install
     - cd ..
     - export CXXFLAGS=-I$LDFLAGS:$(pwd)/deps/lib
