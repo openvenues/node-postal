@@ -18,7 +18,7 @@ describe('expand', function() {
         it('should handle non-ASCII addresses correctly from Node', function() {
             expansions = new sets.Set(postal.expand.expand_address('Friedrichstraße 128, Berlin, Germany'));
             console.log(expansions);
-            assert(expansions.has('friedrich straße 128 berlin germany'));
+            assert(expansions.has('friedrich strasse 128 berlin germany'));
         });
 
     })
