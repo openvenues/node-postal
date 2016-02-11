@@ -1,0 +1,33 @@
+language: node_js
+node_js:
+  - "5"
+  - "4"
+  - "3"
+  - "2"
+  - "1.8"
+  - "1.0"
+  - "0.12"
+  - "0.10"
+addons:
+    apt:
+        sources:
+        - ubuntu-toolchain-r-test
+        packages:
+        - gcc-4.8
+        - g++-4.8
+        - libsnappy-dev
+install:
+    - if [ "$CC" = "gcc" ]; then export CC="gcc-4.8"; export CXX="g++-4.8"; fi
+    - mkdir deps
+    - git clone https://github.com/openvenues/libpostal
+    - cd libpostal
+    - ./bootstrap.sh
+    - ./configure --datadir=$(pwd)/data --prefix=$(realpath $(pwd)/..)
+    - make install
+    - cd ..
+    - export CXXFLAGS=-I$LDFLAGS:$(pwd)/deps/lib
+    - export LDFLAGS=-L$(pwd)/deps/lib
+    - export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$(pwd)/deps/lib
+    - npm install
+script:
+    - npm test
