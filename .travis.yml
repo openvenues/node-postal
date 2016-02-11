@@ -27,9 +27,9 @@ install:
     - ./configure --datadir=$(pwd)/data --prefix=$(realpath $(pwd)/../deps) --bindir=$(realpath $(pwd)/../deps)
     - make install
     - cd ..
-    - export CXXFLAGS=-I$LDFLAGS:$(pwd)/deps/lib
+    - export CXXFLAGS=-I$(pwd)/deps/include
     - export LDFLAGS=-L$(pwd)/deps/lib
-    - export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$(pwd)/deps/lib
     - npm install
 script:
+    - export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$(pwd)/deps/lib
     - npm test
