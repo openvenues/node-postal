@@ -26,7 +26,7 @@ NAN_METHOD(ParseAddress) {
 
     uint64_t i;
 
-    address_parser_options_t options = LIBPOSTAL_ADDRESS_PARSER_DEFAULT_OPTIONS;
+    address_parser_options_t options = get_libpostal_address_parser_default_options();
 
     if (info.Length() > 1 && info[1]->IsObject()) {
         v8::Local<v8::Object> props = info[1]->ToObject();

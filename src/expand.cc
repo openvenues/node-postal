@@ -23,7 +23,7 @@ NAN_METHOD(ExpandAddress) {
         return;
     }
 
-    normalize_options_t options = LIBPOSTAL_DEFAULT_OPTIONS;
+    normalize_options_t options = get_libpostal_default_options();
 
     char **languages = NULL;
     size_t num_languages = 0;
