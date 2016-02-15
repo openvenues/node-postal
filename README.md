@@ -5,12 +5,23 @@ node-postal
 
 These are the NodeJS bindings to [libpostal](https://github.com/openvenues/libpostal), a fast, multilingual NLP library for parsing/normalizing physical addresses. libpostal is written in C because virtually every other language can bind to C.
 
-We're supporting official NodeJS mostly because [Pelias](https://github.com/pelias), Mapzen's geocoder, is written in Node, but also because it's an awesome, ubiquitous language that's immensely popular among folks in the geo world.
+Usage
+-----
+
+```node
+var postal = require('node-postal');
+
+// Expansion API
+postal.expand.expand_address('V XX Settembre, 20');
+
+// Parser API
+postal.parser.parse_address('Mayfield 688 Franklin Ave, Crown Heights, Brooklyn, NY 11238');
+```
 
 Installation
 ------------
 
-Before using the Node bindings, you must install libpostal first. Make sure you have the following prerequisites:
+Before using the Node bindings, you must install the libpostal C library. Make sure you have the following prerequisites:
 
 **On Linux (Ubuntu)**
 ```
@@ -54,19 +65,6 @@ sudo npm install -g node-gyp
 
 ```
 npm install openvenues/node-postal
-```
-
-Usage
------
-
-```node
-var postal = require('node-postal');
-
-// Expansion API
-postal.expand.expand_address('V XX Settembre, 20');
-
-// Parser API
-postal.parser.parse_address('Mayfield 688 Franklin Ave, Crown Heights, Brooklyn, NY 11238');
 ```
 
 Compatibility
