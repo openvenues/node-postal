@@ -72,7 +72,7 @@ postal.parser.parse_address('Mayfield 688 Franklin Ave, Crown Heights, Brooklyn,
 Compatibility
 -------------
 
-The C++ bindings are written using Nan (https://github.com/nodejs/nan), which abstracts many of the API changes across versions of V8. That should keep node-postal compatible
+node-postal is tested on most major versions of Node (0.10+) in continuous integration. The C++ bindings are written using [Nan](https://github.com/nodejs/nan), which abstracts the API changes across various versions of V8.
 
 If you're having trouble compiling, post a Github issue with your OS and Node versions along with the output of npm install / node-gyp rebuild.
 
