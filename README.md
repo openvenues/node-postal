@@ -25,12 +25,12 @@ Before using the Node bindings, you must install the libpostal C library. Make s
 
 **On Linux (Ubuntu)**
 ```
-sudo apt-get install libsnappy-dev autoconf automake libtool
+sudo apt-get install libsnappy-dev autoconf automake libtool pkg-config
 ```
 
 **On Mac OSX**
 ```
-sudo brew install snappy autoconf automake libtool
+sudo brew install snappy autoconf automake libtool pkg-config
 ```
 
 **Installing libpostal**
