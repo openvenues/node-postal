@@ -35,7 +35,7 @@ sudo yum install snappy snappy-devel autoconf automake libtool pkgconfig
 
 **On Mac OSX**
 ```
-sudo brew install snappy autoconf automake libtool pkg-config
+brew install snappy autoconf automake libtool pkg-config
 ```
 
 **Installing libpostal**
