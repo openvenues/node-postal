@@ -1,0 +1,14 @@
+.npmignore
+.gitignore
+.buildinfo
+.DS_Store
+
+HISTORY
+Readme.md
+TODO
+
+docs/
+examples/
+
+build/
+node_modules/
