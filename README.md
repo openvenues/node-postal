@@ -51,6 +51,13 @@ sudo make install
 # On Linux it's probably a good idea to run
 sudo ldconfig
 ```
+**Install node-gyp**
+
+Then install node-gyp system-wide:
+
+```
+sudo npm install -g node-gyp
+```
 
 **Installing node-gyp on Linux (Ubuntu)**
 
@@ -60,11 +67,6 @@ First make sure you have:
 2. NodeJS with all the development headers (if using a package manager like apt-get, follow the instructions here: https://nodejs.org/en/download/package-manager/)
 3. python 2.7
 
-Then install node-gyp system-wide:
-
-```
-sudo npm install -g node-gyp
-```
 
 **Installing the Node bindings**
 
@@ -75,7 +77,7 @@ npm install openvenues/node-postal
 Compatibility
 -------------
 
-node-postal is tested on most major versions of Node (0.10+) in continuous integration. The C++ bindings are written using [Nan](https://github.com/nodejs/nan), which abstracts the API changes across various versions of V8.
+node-postal is tested on most major versions of Node (0.10+) in continuous integration. The C++ bindings are written using [Nan](https://github.com/nodejs/nan), which abstracts the API changes across various versions of V8, so the latest versions of Node will likely work.
 
 If you're having trouble compiling, post a Github issue with your OS and Node versions along with the output of npm install / node-gyp rebuild.
 
@@ -87,6 +89,22 @@ To run the unit tests:
 ```
 npm test
 ```
+
+Troubleshooting
+---------------
+**Installing [libpostal](https://github.com/openvenues/libpostal):**
+node-postal is a thin wrapper around libpostal, which is written in C and does all the heavy lifting. Installing node-postal won't install libpostal as a dependency. You probably don't have to worry about where libpostal is installed - the install steps described above will install it in standard locations for your OS. For OS X, that's at `/usr/local/include` and `/usr/local/lib`. node-postal will look in these locations for the C libraries. If you have problems installing node-postal, check there for those recently installed libpostal libraries.
+
+**Downloading Large Files**
+The `make` process downloads ~3GB of data. Make sure the directory (which requires an absolute path) has room. If you get errors after downloading such as these:
+```
+make[3]: *** [all-local] Error 1
+make[2]: *** [all-recursive] Error 1
+make[1]: *** [all-recursive] Error 1
+make: *** [all] Error 2
+```
+You will have problems with subsequent install steps. Occasionally something will go wrong and it will give up downloading. Once downloading is complete, the make script will unpack the langauge_classifier.tar.gz.X files. If you see these files, your download may have stopped. Try running the make script again.
+
 
 Special Thanks
 --------------
