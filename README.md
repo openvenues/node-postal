@@ -25,17 +25,17 @@ Before using the Node bindings, you must install the libpostal C library. Make s
 
 **On Ubuntu/Debian**
 ```
-sudo apt-get install curl libsnappy-dev autoconf automake libtool pkg-config
+sudo apt-get install curl autoconf automake libtool pkg-config
 ```
 
 **On CentOS/RHEL**
 ```
-sudo yum install snappy snappy-devel autoconf automake libtool pkgconfig
+sudo yum install curl autoconf automake libtool pkgconfig
 ```
 
 **On Mac OSX**
 ```
-brew install snappy autoconf automake libtool pkg-config
+brew install curl autoconf automake libtool pkg-config
 ```
 
 **Installing libpostal**
@@ -93,18 +93,18 @@ npm test
 Troubleshooting
 ---------------
 **Installing [libpostal](https://github.com/openvenues/libpostal):**
-node-postal is a thin wrapper around libpostal, which is written in C and does all the heavy lifting. Installing node-postal won't install libpostal as a dependency. You probably don't have to worry about where libpostal is installed - the install steps described above will install it in standard locations for your OS. For OS X, that's at `/usr/local/include` and `/usr/local/lib`. node-postal will look in these locations for the C libraries. If you have problems installing node-postal, check there for those recently installed libpostal libraries.
+node-postal is a thin wrapper around libpostal, which is written in C. Installing node-postal with npm will not install libpostal as a dependency. The install steps described above will install it in standard locations for your OS. For OS X and Linux, that's `/usr/local/include` and `/usr/local/lib`. node-postal will look in these locations for the C libraries. If you have problems installing node-postal, check there for recently installed libpostal libraries.
 
 **Downloading Large Files**
-The `make` process downloads ~3GB of data. Make sure the directory (which requires an absolute path) has room. If you get errors after downloading such as these:
+The ```make``` process downloads ~3GB of data (these are production-quality machine learning models, the kind Google engineers get to use). Make sure the --datadir argument to ```configure```, which requires an absolute path, has enough room to accommodate the models. If you get errors after downloading, e.g.:
 ```
 make[3]: *** [all-local] Error 1
 make[2]: *** [all-recursive] Error 1
 make[1]: *** [all-recursive] Error 1
 make: *** [all] Error 2
 ```
-You will have problems with subsequent install steps. Occasionally something will go wrong and it will give up downloading. Once downloading is complete, the make script will unpack the langauge_classifier.tar.gz.X files. If you see these files, your download may have stopped. Try running the make script again.
 
+there may be problems with subsequent install steps. Occasionally something will go wrong and it will give up downloading. Once downloading is complete, the make script will unpack the langauge_classifier.tar.gz.X files. If you see these files, your download may have stopped. Try running the make script again.
 
 Special Thanks
 --------------

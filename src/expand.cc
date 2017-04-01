@@ -23,7 +23,7 @@ NAN_METHOD(ExpandAddress) {
         return;
     }
 
-    normalize_options_t options = get_libpostal_default_options();
+    libpostal_normalize_options_t options = libpostal_get_default_options();
 
     char **languages = NULL;
     size_t num_languages = 0;
@@ -52,7 +52,7 @@ NAN_METHOD(ExpandAddress) {
                         for (j = 0; j < langs_value->Length(); j++) {
                             Nan::Utf8String lang_utf8(langs_value->Get(j));
                             char *lang = *lang_utf8;
-                            if (lang != NULL && strlen(lang) < MAX_LANGUAGE_LEN) {
+                            if (lang != NULL && strlen(lang) < LIBPOSTAL_MAX_LANGUAGE_LEN) {
                                 languages[num_languages++] = lang;
                             }
                         }
@@ -106,7 +106,7 @@ NAN_METHOD(ExpandAddress) {
 
     size_t num_expansions = 0;
 
-    char **expansions = expand_address(address, options, &num_expansions);
+    char **expansions = libpostal_expand_address(address, options, &num_expansions);
 
     if (languages != NULL) {
         free(languages);
@@ -137,22 +137,27 @@ void init(v8::Local<v8::Object> exports) {
 
     exports->Set(Nan::New("expand_address").ToLocalChecked(), Nan::New<v8::FunctionTemplate>(ExpandAddress)->GetFunction());
 
-    exports->Set(Nan::New("ADDRESS_NONE").ToLocalChecked(), Nan::New(ADDRESS_NONE));
-    exports->Set(Nan::New("ADDRESS_ANY").ToLocalChecked(), Nan::New(ADDRESS_ANY));
-    exports->Set(Nan::New("ADDRESS_NAME").ToLocalChecked(), Nan::New(ADDRESS_NAME));
-    exports->Set(Nan::New("ADDRESS_HOUSE_NUMBER").ToLocalChecked(), Nan::New(ADDRESS_HOUSE_NUMBER));
-    exports->Set(Nan::New("ADDRESS_STREET").ToLocalChecked(), Nan::New(ADDRESS_STREET));
-    exports->Set(Nan::New("ADDRESS_UNIT").ToLocalChecked(), Nan::New(ADDRESS_UNIT));
-    exports->Set(Nan::New("ADDRESS_LOCALITY").ToLocalChecked(), Nan::New(ADDRESS_LOCALITY));
-    exports->Set(Nan::New("ADDRESS_ADMIN1").ToLocalChecked(), Nan::New(ADDRESS_ADMIN1));
-    exports->Set(Nan::New("ADDRESS_ADMIN2").ToLocalChecked(), Nan::New(ADDRESS_ADMIN2));
-    exports->Set(Nan::New("ADDRESS_ADMIN3").ToLocalChecked(), Nan::New(ADDRESS_ADMIN3));
-    exports->Set(Nan::New("ADDRESS_ADMIN4").ToLocalChecked(), Nan::New(ADDRESS_ADMIN4));
-    exports->Set(Nan::New("ADDRESS_ADMIN_OTHER").ToLocalChecked(), Nan::New(ADDRESS_ADMIN_OTHER));
-    exports->Set(Nan::New("ADDRESS_COUNTRY").ToLocalChecked(), Nan::New(ADDRESS_COUNTRY));
-    exports->Set(Nan::New("ADDRESS_POSTAL_CODE").ToLocalChecked(), Nan::New(ADDRESS_POSTAL_CODE));
-    exports->Set(Nan::New("ADDRESS_NEIGHBORHOOD").ToLocalChecked(), Nan::New(ADDRESS_NEIGHBORHOOD));
-    exports->Set(Nan::New("ADDRESS_ALL").ToLocalChecked(), Nan::New(ADDRESS_ALL));
+    exports->Set(Nan::New("ADDRESS_NONE").ToLocalChecked(), Nan::New(LIBPOSTAL_ADDRESS_NONE));
+    exports->Set(Nan::New("ADDRESS_ANY").ToLocalChecked(), Nan::New(LIBPOSTAL_ADDRESS_ANY));
+    exports->Set(Nan::New("ADDRESS_NAME").ToLocalChecked(), Nan::New(LIBPOSTAL_ADDRESS_NAME));
+    exports->Set(Nan::New("ADDRESS_HOUSE_NUMBER").ToLocalChecked(), Nan::New(LIBPOSTAL_ADDRESS_HOUSE_NUMBER));
+    exports->Set(Nan::New("ADDRESS_STREET").ToLocalChecked(), Nan::New(LIBPOSTAL_ADDRESS_STREET));
+    exports->Set(Nan::New("ADDRESS_UNIT").ToLocalChecked(), Nan::New(LIBPOSTAL_ADDRESS_UNIT));
+    exports->Set(Nan::New("ADDRESS_LEVEL").ToLocalChecked(), Nan::New(LIBPOSTAL_ADDRESS_LEVEL));
+    exports->Set(Nan::New("ADDRESS_STAIRCASE").ToLocalChecked(), Nan::New(LIBPOSTAL_ADDRESS_STAIRCASE));
+    exports->Set(Nan::New("ADDRESS_ENTRANCE").ToLocalChecked(), Nan::New(LIBPOSTAL_ADDRESS_ENTRANCE));
+
+    exports->Set(Nan::New("ADDRESS_CATEGORY").ToLocalChecked(), Nan::New(LIBPOSTAL_ADDRESS_CATEGORY));
+    exports->Set(Nan::New("ADDRESS_NEAR").ToLocalChecked(), Nan::New(LIBPOSTAL_ADDRESS_NEAR));
+
+    exports->Set(Nan::New("ADDRESS_TOPONYM").ToLocalChecked(), Nan::New(LIBPOSTAL_ADDRESS_TOPONYM));
+    exports->Set(Nan::New("ADDRESS_POSTAL_CODE").ToLocalChecked(), Nan::New(LIBPOSTAL_ADDRESS_POSTAL_CODE));
+    exports->Set(Nan::New("ADDRESS_PO_BOX").ToLocalChecked(), Nan::New(LIBPOSTAL_ADDRESS_PO_BOX));
+    exports->Set(Nan::New("ADDRESS_ALL").ToLocalChecked(), Nan::New(LIBPOSTAL_ADDRESS_ALL));
+
+
+
+
 
     node::AtExit(cleanup);
 }
