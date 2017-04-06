@@ -17,7 +17,7 @@ describe('expand', function() {
         });
         it('should handle non-ASCII addresses correctly from Node', function() {
             expansions = new sets.Set(postal.expand.expand_address('Friedrichstraße 128, Berlin, Germany'));
-            assert(expansions.has('friedrich strasse 128 berlin germany'));
+            assert(expansions.has('friedrich straße 128 berlin germany'));
         });
 
     })
@@ -54,41 +54,5 @@ describe('parser', function() {
                 country: 'usa'
             }));
         });
-        it('should parse a venue and state', function() {
-            parsed = postal.parser.parse_address('whole foods ny');
-            assert(has_components(parsed, {
-                house: 'whole foods',
-                state: 'ny'
-            }));
-        });
-        it('should parse house/apt style house_number', function() {
-            parsed = postal.parser.parse_address('1917/2 Pike Drive');
-            assert(has_components(parsed, {
-                house_number: '1917 / 2',
-                road: 'pike drive'
-            }));
-        });
-        it('should parse different comma styles correctly', function() {
-            parsed = postal.parser.parse_address('3437 warwickshire rd,pa');
-            assert(has_components(parsed, {
-                house_number: '3437',
-                road: 'warwickshire rd',
-                state: 'pa'
-            }));
-            parsed = postal.parser.parse_address('3437 warwickshire rd, pa');
-            assert(has_components(parsed, {
-                house_number: '3437',
-                road: 'warwickshire rd',
-                state: 'pa'
-            }));
-            parsed = postal.parser.parse_address('3437 warwickshire rd pa');
-            assert(has_components(parsed, {
-                house_number: '3437',
-                road: 'warwickshire rd',
-                state: 'pa'
-            }));
-
-        });
-
     })
 })

@@ -26,7 +26,7 @@ NAN_METHOD(ParseAddress) {
 
     uint64_t i;
 
-    address_parser_options_t options = get_libpostal_address_parser_default_options();
+    libpostal_address_parser_options_t options = libpostal_get_address_parser_default_options();
 
     if (info.Length() > 1 && info[1]->IsObject()) {
         v8::Local<v8::Object> props = info[1]->ToObject();
@@ -59,7 +59,7 @@ NAN_METHOD(ParseAddress) {
 
     }
 
-    address_parser_response_t *response = parse_address(address, options);
+    libpostal_address_parser_response_t *response = libpostal_parse_address(address, options);
 
     if (response == NULL) {
         Nan::ThrowError("Error parsing address");
@@ -82,7 +82,7 @@ NAN_METHOD(ParseAddress) {
         ret->Set(i, o);
     }
 
-    address_parser_response_destroy(response);
+    libpostal_address_parser_response_destroy(response);
 
     info.GetReturnValue().Set(ret);
 }
