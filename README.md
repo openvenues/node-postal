@@ -96,7 +96,7 @@ Troubleshooting
 node-postal is a thin wrapper around libpostal, which is written in C. Installing node-postal with npm will not install libpostal as a dependency. The install steps described above will install it in standard locations for your OS. For OS X and Linux, that's `/usr/local/include` and `/usr/local/lib`. node-postal will look in these locations for the C libraries. If you have problems installing node-postal, check there for recently installed libpostal libraries.
 
 **Downloading Large Files**
-The ```make``` process downloads ~3GB of data (these are production-quality machine learning models, the kind Google engineers get to use). Make sure the --datadir argument to ```configure```, which requires an absolute path, has enough room to accommodate the models. If you get errors after downloading, e.g.:
+The ```make``` process downloads ~750MB of data, ~2GB unzipped (note: these are production-quality machine learning models trained on over a billion addresses, that's how much disk/memory it takes). Make sure the --datadir argument to ```configure```, which requires an absolute path, has enough room to accommodate the models. If you get errors after downloading, e.g.:
 ```
 make[3]: *** [all-local] Error 1
 make[2]: *** [all-recursive] Error 1
