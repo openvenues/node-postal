@@ -44,7 +44,7 @@ brew install curl autoconf automake libtool pkg-config
 git clone https://github.com/openvenues/libpostal
 cd libpostal
 ./bootstrap.sh
-./configure --datadir=[...some dir with a few GB of space...]
+./configure --datadir=~/libpostaldata  [...some dir with a few GB of space or leave blank for default location]
 make
 sudo make install
 
@@ -105,6 +105,9 @@ make: *** [all] Error 2
 ```
 
 there may be problems with subsequent install steps. Occasionally something will go wrong and it will give up downloading. Once downloading is complete, the make script will unpack the langauge_classifier.tar.gz.X files. If you see these files, your download may have stopped. Try running the make script again.
+
+**Install libpostal before node-postal**
+You may see an error like this: `Error: Could not locate the bindings file`. [The solution](https://github.com/pelias/api/issues/525#issuecomment-308265274) is to delete and reinstall node modules for the API: `rm -rf node_modules && npm install`.
 
 Special Thanks
 --------------
