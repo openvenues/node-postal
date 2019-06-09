@@ -29,11 +29,11 @@ NAN_METHOD(ParseAddress) {
     libpostal_address_parser_options_t options = libpostal_get_address_parser_default_options();
 
     if (info.Length() > 1 && info[1]->IsObject()) {
-        v8::Local<v8::Object> props = info[1]->ToObject();
+        v8::Local<v8::Object> props = info[1].As<v8::Object>();
         v8::Local<v8::Array> prop_names = Nan::GetPropertyNames(props).ToLocalChecked();
 
         for (i = 0; i < prop_names->Length(); i++) {
-            v8::Local<v8::Value> key = prop_names->Get(i);
+            v8::Local<v8::Value> key = Nan::Get(prop_names, i).ToLocalChecked();
 
             if (key->IsString()) {
                 Nan::Utf8String utf8_key(key);
@@ -76,10 +76,10 @@ NAN_METHOD(ParseAddress) {
         char *label = response->labels[i];
 
         v8::Local<v8::Object> o = Nan::New<v8::Object>();
-        o->Set(name_key, Nan::New(component).ToLocalChecked());
-        o->Set(label_key, Nan::New(label).ToLocalChecked());
+        Nan::Set(o, name_key, Nan::New(component).ToLocalChecked());
+        Nan::Set(o, label_key, Nan::New(label).ToLocalChecked());
 
-        ret->Set(i, o);
+        Nan::Set(ret, i, o);
     }
 
     libpostal_address_parser_response_destroy(response);
@@ -98,7 +98,7 @@ void init(v8::Local<v8::Object> exports) {
         return;
     }
 
-    exports->Set(Nan::New("parse_address").ToLocalChecked(), Nan::New<v8::FunctionTemplate>(ParseAddress)->GetFunction());
+     Nan::Set(exports, Nan::New("parse_address").ToLocalChecked(), Nan::GetFunction(Nan::New<v8::FunctionTemplate>(ParseAddress)).ToLocalChecked());
 
     node::AtExit(cleanup);
 }
