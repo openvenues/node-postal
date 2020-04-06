@@ -3,7 +3,10 @@
 
 #define PARSER_USAGE "Usage: parse_address(address[, options])"
 
-NAN_METHOD(ParseAddress) {
+void ParseAddress(const Nan::FunctionCallbackInfo<v8::Value>& info) {
+    v8::Isolate *isolate = info.GetIsolate();
+	v8::Local<v8::Context> context = isolate->GetCurrentContext();
+
     if (info.Length() < 1) {
         Nan::ThrowTypeError(PARSER_USAGE);
         return;
@@ -29,11 +32,11 @@ NAN_METHOD(ParseAddress) {
     libpostal_address_parser_options_t options = libpostal_get_address_parser_default_options();
 
     if (info.Length() > 1 && info[1]->IsObject()) {
-        v8::Local<v8::Object> props = info[1]->ToObject();
+        v8::Local<v8::Object> props = info[1]->ToObject(context).ToLocalChecked();
         v8::Local<v8::Array> prop_names = Nan::GetPropertyNames(props).ToLocalChecked();
 
         for (i = 0; i < prop_names->Length(); i++) {
-            v8::Local<v8::Value> key = prop_names->Get(i);
+            v8::Local<v8::Value> key = prop_names->Get(context, i).ToLocalChecked();
 
             if (key->IsString()) {
                 Nan::Utf8String utf8_key(key);
@@ -76,10 +79,10 @@ NAN_METHOD(ParseAddress) {
         char *label = response->labels[i];
 
         v8::Local<v8::Object> o = Nan::New<v8::Object>();
-        o->Set(name_key, Nan::New(component).ToLocalChecked());
-        o->Set(label_key, Nan::New(label).ToLocalChecked());
+        o->Set(context, name_key, Nan::New(component).ToLocalChecked());
+        o->Set(context, label_key, Nan::New(label).ToLocalChecked());
 
-        ret->Set(i, o);
+        ret->Set(context, i, o);
     }
 
     libpostal_address_parser_response_destroy(response);
@@ -93,12 +96,24 @@ static void cleanup(void*) {
 }
 
 void init(v8::Local<v8::Object> exports) {
+    v8::Local<v8::Context> context = exports->CreationContext();
+
     if (!libpostal_setup() || !libpostal_setup_parser()) {
         Nan::ThrowError("Could not load libpostal");
         return;
     }
 
-    exports->Set(Nan::New("parse_address").ToLocalChecked(), Nan::New<v8::FunctionTemplate>(ParseAddress)->GetFunction());
+    exports->Set(
+        context,
+        Nan::New("parse_address").ToLocalChecked(),
+        Nan::New<v8::FunctionTemplate>(ParseAddress)->GetFunction(context).ToLocalChecked()
+    );
+
+    exports->Set(
+        context,
+        Nan::New("parseAddress").ToLocalChecked(),
+        Nan::New<v8::FunctionTemplate>(ParseAddress)->GetFunction(context).ToLocalChecked()
+    );
 
     node::AtExit(cleanup);
 }

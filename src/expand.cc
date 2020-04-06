@@ -4,7 +4,10 @@
 
 #define EXPAND_USAGE "Usage: expand_address(address, options)"
 
-NAN_METHOD(ExpandAddress) {
+void ExpandAddress(const Nan::FunctionCallbackInfo<v8::Value>& info) {
+    v8::Isolate *isolate = info.GetIsolate();
+	v8::Local<v8::Context> context = isolate->GetCurrentContext();
+
     if (info.Length() < 1) {
         Nan::ThrowTypeError(EXPAND_USAGE);
         return;
@@ -31,12 +34,12 @@ NAN_METHOD(ExpandAddress) {
     uint64_t i, j;
 
     if (info.Length() > 1) {
-        v8::Local<v8::Object> props = info[1]->ToObject();
+        v8::Local<v8::Object> props = info[1]->ToObject(context).ToLocalChecked();
 
         v8::Local<v8::Array> prop_names = Nan::GetPropertyNames(props).ToLocalChecked();
 
         for (i = 0; i < prop_names->Length(); i++) {
-            v8::Local<v8::Value> key = prop_names->Get(i);
+            v8::Local<v8::Value> key = prop_names->Get(context, i).ToLocalChecked();
 
             if (key->IsString()) {
                 Nan::Utf8String utf8_key(key);
@@ -50,7 +53,7 @@ NAN_METHOD(ExpandAddress) {
                         languages = (char **)malloc(len);
                         
                         for (j = 0; j < langs_value->Length(); j++) {
-                            Nan::Utf8String lang_utf8(langs_value->Get(j));
+                            Nan::Utf8String lang_utf8(langs_value->Get(context, j).ToLocalChecked());
                             char *lang = *lang_utf8;
                             if (lang != NULL && strlen(lang) < LIBPOSTAL_MAX_LANGUAGE_LEN) {
                                 languages[num_languages++] = lang;
@@ -116,7 +119,7 @@ NAN_METHOD(ExpandAddress) {
 
     for (i = 0; i < num_expansions; i++) {
         v8::Local<v8::String> e = Nan::New(expansions[i]).ToLocalChecked();
-        ret->Set(i, e);
+        ret->Set(context, i, e);
         free(expansions[i]);
     }
     free(expansions);
@@ -130,34 +133,42 @@ static void cleanup(void*) {
 }
 
 void init(v8::Local<v8::Object> exports) {
+    v8::Local<v8::Context> context = exports->CreationContext();
+
     if (!libpostal_setup() || !libpostal_setup_language_classifier()) {
         Nan::ThrowError("Could not load libpostal");
         return;
     }
 
-    exports->Set(Nan::New("expand_address").ToLocalChecked(), Nan::New<v8::FunctionTemplate>(ExpandAddress)->GetFunction());
+    exports->Set(
+        context, 
+        Nan::New("expand_address").ToLocalChecked(),
+        Nan::New<v8::FunctionTemplate>(ExpandAddress)->GetFunction(context).ToLocalChecked()
+    );
 
-    exports->Set(Nan::New("ADDRESS_NONE").ToLocalChecked(), Nan::New(LIBPOSTAL_ADDRESS_NONE));
-    exports->Set(Nan::New("ADDRESS_ANY").ToLocalChecked(), Nan::New(LIBPOSTAL_ADDRESS_ANY));
-    exports->Set(Nan::New("ADDRESS_NAME").ToLocalChecked(), Nan::New(LIBPOSTAL_ADDRESS_NAME));
-    exports->Set(Nan::New("ADDRESS_HOUSE_NUMBER").ToLocalChecked(), Nan::New(LIBPOSTAL_ADDRESS_HOUSE_NUMBER));
-    exports->Set(Nan::New("ADDRESS_STREET").ToLocalChecked(), Nan::New(LIBPOSTAL_ADDRESS_STREET));
-    exports->Set(Nan::New("ADDRESS_UNIT").ToLocalChecked(), Nan::New(LIBPOSTAL_ADDRESS_UNIT));
-    exports->Set(Nan::New("ADDRESS_LEVEL").ToLocalChecked(), Nan::New(LIBPOSTAL_ADDRESS_LEVEL));
-    exports->Set(Nan::New("ADDRESS_STAIRCASE").ToLocalChecked(), Nan::New(LIBPOSTAL_ADDRESS_STAIRCASE));
-    exports->Set(Nan::New("ADDRESS_ENTRANCE").ToLocalChecked(), Nan::New(LIBPOSTAL_ADDRESS_ENTRANCE));
+    exports->Set(
+        context, 
+        Nan::New("expandAddress").ToLocalChecked(),
+        Nan::New<v8::FunctionTemplate>(ExpandAddress)->GetFunction(context).ToLocalChecked()
+    );
 
-    exports->Set(Nan::New("ADDRESS_CATEGORY").ToLocalChecked(), Nan::New(LIBPOSTAL_ADDRESS_CATEGORY));
-    exports->Set(Nan::New("ADDRESS_NEAR").ToLocalChecked(), Nan::New(LIBPOSTAL_ADDRESS_NEAR));
+    exports->Set(context, Nan::New("ADDRESS_NONE").ToLocalChecked(), Nan::New(LIBPOSTAL_ADDRESS_NONE));
+    exports->Set(context, Nan::New("ADDRESS_ANY").ToLocalChecked(), Nan::New(LIBPOSTAL_ADDRESS_ANY));
+    exports->Set(context, Nan::New("ADDRESS_NAME").ToLocalChecked(), Nan::New(LIBPOSTAL_ADDRESS_NAME));
+    exports->Set(context, Nan::New("ADDRESS_HOUSE_NUMBER").ToLocalChecked(), Nan::New(LIBPOSTAL_ADDRESS_HOUSE_NUMBER));
+    exports->Set(context, Nan::New("ADDRESS_STREET").ToLocalChecked(), Nan::New(LIBPOSTAL_ADDRESS_STREET));
+    exports->Set(context, Nan::New("ADDRESS_UNIT").ToLocalChecked(), Nan::New(LIBPOSTAL_ADDRESS_UNIT));
+    exports->Set(context, Nan::New("ADDRESS_LEVEL").ToLocalChecked(), Nan::New(LIBPOSTAL_ADDRESS_LEVEL));
+    exports->Set(context, Nan::New("ADDRESS_STAIRCASE").ToLocalChecked(), Nan::New(LIBPOSTAL_ADDRESS_STAIRCASE));
+    exports->Set(context, Nan::New("ADDRESS_ENTRANCE").ToLocalChecked(), Nan::New(LIBPOSTAL_ADDRESS_ENTRANCE));
 
-    exports->Set(Nan::New("ADDRESS_TOPONYM").ToLocalChecked(), Nan::New(LIBPOSTAL_ADDRESS_TOPONYM));
-    exports->Set(Nan::New("ADDRESS_POSTAL_CODE").ToLocalChecked(), Nan::New(LIBPOSTAL_ADDRESS_POSTAL_CODE));
-    exports->Set(Nan::New("ADDRESS_PO_BOX").ToLocalChecked(), Nan::New(LIBPOSTAL_ADDRESS_PO_BOX));
-    exports->Set(Nan::New("ADDRESS_ALL").ToLocalChecked(), Nan::New(LIBPOSTAL_ADDRESS_ALL));
+    exports->Set(context, Nan::New("ADDRESS_CATEGORY").ToLocalChecked(), Nan::New(LIBPOSTAL_ADDRESS_CATEGORY));
+    exports->Set(context, Nan::New("ADDRESS_NEAR").ToLocalChecked(), Nan::New(LIBPOSTAL_ADDRESS_NEAR));
 
-
-
-
+    exports->Set(context, Nan::New("ADDRESS_TOPONYM").ToLocalChecked(), Nan::New(LIBPOSTAL_ADDRESS_TOPONYM));
+    exports->Set(context, Nan::New("ADDRESS_POSTAL_CODE").ToLocalChecked(), Nan::New(LIBPOSTAL_ADDRESS_POSTAL_CODE));
+    exports->Set(context, Nan::New("ADDRESS_PO_BOX").ToLocalChecked(), Nan::New(LIBPOSTAL_ADDRESS_PO_BOX));
+    exports->Set(context, Nan::New("ADDRESS_ALL").ToLocalChecked(), Nan::New(LIBPOSTAL_ADDRESS_ALL));
 
     node::AtExit(cleanup);
 }
