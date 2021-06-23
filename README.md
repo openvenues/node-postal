@@ -71,7 +71,7 @@ First make sure you have:
 **Installing the Node bindings**
 
 ```
-npm install openvenues/node-postal
+npm install node-postal
 ```
 
 Compatibility
