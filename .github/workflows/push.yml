@@ -1,0 +1,61 @@
+name: 'Continuous Integration'
+on: push
+jobs:
+  unit-tests:
+    runs-on: '${{ matrix.os }}'
+    continue-on-error: ${{ matrix.status != 'current' }}
+    strategy:
+      matrix:
+        status: ['current']
+        os:
+          - ubuntu-20.04
+        node-version:
+          - 12.x
+          - 14.x
+        include:
+          - os: ubuntu-20.04
+            node-version: 8.x
+            status: 'deprecated'
+          - os: ubuntu-20.04
+            node-version: 10.x
+            status: 'deprecated'
+          - os: ubuntu-20.04
+            node-version: 16.x
+            status: 'experimental'
+    steps:
+      - uses: actions/checkout@v2
+      - name: 'Install apt packages'
+        shell: bash
+        run: |
+          sudo apt-get update
+          sudo apt-get install curl autoconf automake libtool pkg-config
+      - name: 'Create working directories'
+        shell: bash
+        run: |
+          sudo mkdir -p /code /data /deps
+          sudo chown $USER:$USER /code /data /deps
+      - name: 'Install libpostal'
+        shell: bash
+        run: |
+          cd /code
+          git clone https://github.com/openvenues/libpostal
+          cd libpostal
+          ./bootstrap.sh
+          ./configure --datadir=/data --prefix=/deps --bindir=/deps || cat config.log
+          make -j4
+          make install
+      - name: 'Install node.js ${{ matrix.node-version }}'
+        uses: actions/setup-node@v2-beta
+        with:
+          node-version: '${{ matrix.node-version }}'
+      - name: 'Install node-postal'
+        env:
+          CXXFLAGS: '-I/deps/include'
+          LDFLAGS: '-L/deps/lib'
+        run:
+          npm install
+      - name: 'Run unit tests'
+        env:
+          LD_LIBRARY_PATH: '/deps/lib'
+        run: |
+          npm test
