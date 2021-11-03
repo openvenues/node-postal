@@ -115,7 +115,12 @@ void init(v8::Local<v8::Object> exports) {
         Nan::New<v8::FunctionTemplate>(ParseAddress)->GetFunction(context).ToLocalChecked()
     );
 
-    node::AtExit(cleanup);
+    #if NODE_MAJOR_VERSION >= 12
+        node::Environment* env = node::GetCurrentEnvironment(Nan::GetCurrentContext());
+        node::AtExit(env, cleanup, NULL);
+    #else
+        node::AtExit(cleanup);
+    #endif
 }
 
 NODE_MODULE(parser, init)
