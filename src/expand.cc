@@ -170,7 +170,12 @@ void init(v8::Local<v8::Object> exports) {
     exports->Set(context, Nan::New("ADDRESS_PO_BOX").ToLocalChecked(), Nan::New(LIBPOSTAL_ADDRESS_PO_BOX));
     exports->Set(context, Nan::New("ADDRESS_ALL").ToLocalChecked(), Nan::New(LIBPOSTAL_ADDRESS_ALL));
 
-    node::AtExit(cleanup);
+    #if NODE_MAJOR_VERSION >= 12
+        node::Environment* env = node::GetCurrentEnvironment(Nan::GetCurrentContext());
+        node::AtExit(env, cleanup, NULL);
+    #else
+        node::AtExit(cleanup);
+    #endif
 }
 
 NODE_MODULE(expand, init)
