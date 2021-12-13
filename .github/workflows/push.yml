@@ -12,6 +12,7 @@ jobs:
         node-version:
           - 12.x
           - 14.x
+          - 16.x
         include:
           - os: ubuntu-20.04
             node-version: 8.x
@@ -19,9 +20,6 @@ jobs:
           - os: ubuntu-20.04
             node-version: 10.x
             status: 'deprecated'
-          - os: ubuntu-20.04
-            node-version: 16.x
-            status: 'experimental'
     steps:
       - uses: actions/checkout@v2
       - name: 'Install apt packages'
