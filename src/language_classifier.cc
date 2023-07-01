@@ -27,11 +27,14 @@ void LanguageClassifier(const Nan::FunctionCallbackInfo<v8::Value>& info) {
 
     if (response != NULL) {
         v8::Local<v8::Array> lang_array = Nan::New<v8::Array>(response->num_languages);
-        for (size_t i = 0; i < response->num_languages; i++) {
-            const char* language = response->languages[i]; // Directly access the array
+
+        for (size_t i = 0; i < response->num_languages; ++i) {
+            const char *language = response->languages[i];
+            const double probability = response->probs[i];
             
             v8::Local<v8::Object> lang_obj = Nan::New<v8::Object>();
             Nan::Set(lang_obj, Nan::New("language").ToLocalChecked(), Nan::New(language).ToLocalChecked());
+            Nan::Set(lang_obj, Nan::New("probability").ToLocalChecked(), Nan::New(probability));
             
             Nan::Set(lang_array, i, lang_obj);
         }
