@@ -96,7 +96,7 @@ static void cleanup(void*) {
 }
 
 void init(v8::Local<v8::Object> exports) {
-    v8::Local<v8::Context> context = exports->CreationContext();
+    v8::Local<v8::Context> context = exports->GetCreationContext().ToLocalChecked();
 
     if (!libpostal_setup() || !libpostal_setup_parser()) {
         Nan::ThrowError("Could not load libpostal");
