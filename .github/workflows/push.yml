@@ -5,6 +5,7 @@ jobs:
     runs-on: '${{ matrix.os }}'
     continue-on-error: ${{ matrix.status != 'current' }}
     strategy:
+      fail-fast: false
       matrix:
         status: ['current']
         os:
@@ -28,7 +29,7 @@ jobs:
         shell: bash
         run: |
           sudo apt-get update
-          sudo apt-get install curl autoconf automake libtool pkg-config
+          sudo apt-get install build-essential curl autoconf automake libtool pkg-config
       - name: 'Create working directories'
         shell: bash
         run: |

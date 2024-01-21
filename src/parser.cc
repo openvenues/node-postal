@@ -5,7 +5,6 @@
 
 void ParseAddress(const Nan::FunctionCallbackInfo<v8::Value>& info) {
     v8::Isolate *isolate = info.GetIsolate();
-	v8::Local<v8::Context> context = isolate->GetCurrentContext();
 
     if (info.Length() < 1) {
         Nan::ThrowTypeError(PARSER_USAGE);
