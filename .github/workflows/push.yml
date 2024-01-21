@@ -28,7 +28,7 @@ jobs:
         shell: bash
         run: |
           sudo apt-get update
-          sudo apt-get install curl autoconf automake libtool pkg-config
+          sudo apt-get install build-essential curl autoconf automake libtool pkg-config
       - name: 'Create working directories'
         shell: bash
         run: |
@@ -43,6 +43,7 @@ jobs:
           ./bootstrap.sh
           ./configure --datadir=/data --prefix=/deps --bindir=/deps || cat config.log
           make -j4
+          cd build
           make install
       - name: 'Install node.js ${{ matrix.node-version }}'
         uses: actions/setup-node@v2-beta
