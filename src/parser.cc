@@ -5,7 +5,6 @@
 
 void ParseAddress(const Nan::FunctionCallbackInfo<v8::Value>& info) {
     v8::Isolate *isolate = info.GetIsolate();
-	v8::Local<v8::Context> context = isolate->GetCurrentContext();
 
     if (info.Length() < 1) {
         Nan::ThrowTypeError(PARSER_USAGE);
@@ -96,7 +95,11 @@ static void cleanup(void*) {
 }
 
 void init(v8::Local<v8::Object> exports) {
-    v8::Local<v8::Context> context = exports->GetCreationContext().ToLocalChecked();
+     #if NODE_MAJOR_VERSION >= 16
+        v8::Local<v8::Context> context = exports->GetCreationContext().ToLocalChecked();
+    #else
+       v8::Local<v8::Context> context = exports->CreationContext();
+    #endif
 
     if (!libpostal_setup() || !libpostal_setup_parser()) {
         Nan::ThrowError("Could not load libpostal");
