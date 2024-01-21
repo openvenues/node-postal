@@ -1,3 +1,4 @@
+#include <node_version.h>
 #include <libpostal/libpostal.h>
 #include <nan.h>
 
@@ -95,12 +96,12 @@ static void cleanup(void*) {
 }
 
 void init(v8::Local<v8::Object> exports) {
-     #if NODE_MAJOR_VERSION >= 16
+    #if NODE_MAJOR_VERSION >= 16
         v8::Local<v8::Context> context = exports->GetCreationContext().ToLocalChecked();
     #else
        v8::Local<v8::Context> context = exports->CreationContext();
     #endif
-
+    
     if (!libpostal_setup() || !libpostal_setup_parser()) {
         Nan::ThrowError("Could not load libpostal");
         return;

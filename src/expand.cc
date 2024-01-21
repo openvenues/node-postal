@@ -1,7 +1,7 @@
+#include <node_version.h>
 #include <libpostal/libpostal.h>
 #include <nan.h>
 #include <string.h>
-#include <node.h>
 
 #define EXPAND_USAGE "Usage: expand_address(address, options)"
 
