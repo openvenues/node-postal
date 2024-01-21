@@ -1,4 +1,4 @@
-#include <node_version.h>
+#include <node.h>
 #include <libpostal/libpostal.h>
 #include <nan.h>
 #include <string.h>

@@ -1,4 +1,4 @@
-#include <node_version.h>
+#include <node.h>
 #include <libpostal/libpostal.h>
 #include <nan.h>
 
@@ -101,7 +101,7 @@ void init(v8::Local<v8::Object> exports) {
     #else
        v8::Local<v8::Context> context = exports->CreationContext();
     #endif
-    
+
     if (!libpostal_setup() || !libpostal_setup_parser()) {
         Nan::ThrowError("Could not load libpostal");
         return;
