@@ -24,7 +24,7 @@ jobs:
             node-version: 10.x
             status: 'deprecated'
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v2
       - name: 'Install apt packages'
         shell: bash
         run: |
