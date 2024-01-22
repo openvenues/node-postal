@@ -135,7 +135,7 @@ static void cleanup(void*) {
 void init(v8::Local<v8::Object> exports) {
     // Check Node.js version
     #if NODE_MAJOR_VERSION >= 16
-        v8::Local<v8::Context> context = exports->GetCreationContext().ToLocalChecked();    #else
+        v8::Local<v8::Context> context = exports->GetCreationContext().ToLocalChecked();
     #else
         v8::Local<v8::Context> context = exports->CreationContext();
     #endif
