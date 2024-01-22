@@ -133,8 +133,13 @@ static void cleanup(void*) {
 }
 
 void init(v8::Local<v8::Object> exports) {
-    v8::Local<v8::Context> context = exports->GetCreationContext().ToLocalChecked(); //required to work on node v16+
-
+    // Check Node.js version
+    #if NODE_MAJOR_VERSION >= 16
+        v8::Local<v8::Context> context = exports->GetCreationContext().ToLocalChecked();    #else
+    #else
+        v8::Local<v8::Context> context = exports->CreationContext();
+    #endif
+    
     if (!libpostal_setup() || !libpostal_setup_language_classifier()) {
         Nan::ThrowError("Could not load libpostal");
         return;
