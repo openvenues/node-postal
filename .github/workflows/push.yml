@@ -16,6 +16,7 @@ jobs:
           - 16.x
           - 18.x
           - 20.x
+          - 22.x
         include:
           - os: ubuntu-20.04
             node-version: 8.x
