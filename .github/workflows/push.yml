@@ -9,7 +9,7 @@ jobs:
       matrix:
         status: ['current']
         os:
-          - ubuntu-20.04
+          - ubuntu-22.04-arm
         node-version:
           - 12.x
           - 14.x
@@ -17,6 +17,7 @@ jobs:
           - 18.x
           - 20.x
           - 22.x
+          - 23.x
         include:
           - os: ubuntu-20.04
             node-version: 8.x
