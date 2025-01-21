@@ -25,6 +25,9 @@ jobs:
           - os: ubuntu-20.04
             node-version: 10.x
             status: 'deprecated'
+          - os: ubuntu-24.04-arm
+            node-version: 22.x
+            status: 'current'
     steps:
       - uses: actions/checkout@v4
       - name: 'Install apt packages'
