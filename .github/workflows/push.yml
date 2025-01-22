@@ -47,7 +47,9 @@ jobs:
           git clone https://github.com/openvenues/libpostal
           cd libpostal
           ./bootstrap.sh
-          ./configure --datadir=/data --prefix=/deps --bindir=/deps || cat config.log
+          CONFIGURE_FLAGS=(--datadir=/data --prefix=/deps --bindir=/deps)
+          if [[ $(uname -m) =~ ^(aarch64|arm64)?$ ]]; then CONFIGURE_FLAGS+=(--disable-sse2); fi
+          ./configure "${CONFIGURE_FLAGS[@]}" || cat config.log
           make -j4
           make install
       - name: 'Install node.js ${{ matrix.node-version }}'
