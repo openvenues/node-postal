@@ -120,10 +120,9 @@ void ExpandAddress(const Nan::FunctionCallbackInfo<v8::Value>& info) {
     for (i = 0; i < num_expansions; i++) {
         v8::Local<v8::String> e = Nan::New(expansions[i]).ToLocalChecked();
         ret->Set(context, i, e);
+        free(expansions[i]);
     }
-
-    // Free expansions
-    libpostal_expansion_array_destroy(expansions, num_expansions);
+    free(expansions);
 
     info.GetReturnValue().Set(ret);
 }
